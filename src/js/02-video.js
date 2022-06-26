@@ -1,10 +1,15 @@
-import Player from '@vimeo/player';
-import throttle from 'lodash.throttle';
-const iframe = document.querySelector('iframe');
-const player = new Player(iframe);
 const TIMESTAMP_NAME = 'videoplayer-current-time';
 
-player.on('timeupdate', throttle(onTimeupdate,1000));
+import throttle from 'lodash.throttle';
+
+import Player from '@vimeo/player';
+const iframe = document.querySelector('iframe');
+const player = new Player(iframe);
+const resetBtnRef = document.querySelector('#reset-time');
+
+resetBtnRef.addEventListener('click', onResetClick);
+player.on('timeupdate', throttle(onTimeupdate, 1000));
+
 onPageLoad();
 
 function onTimeupdate(data) {
@@ -16,4 +21,10 @@ function onPageLoad() {
   if (savedVideoTime) {
     player.setCurrentTime(savedVideoTime);
   }
+}
+
+function onResetClick() {
+  player.pause();
+  player.setCurrentTime(0);
+  localStorage.removeItem(TIMESTAMP_NAME);
 }
